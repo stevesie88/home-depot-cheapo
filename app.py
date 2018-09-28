@@ -10,7 +10,8 @@ from plotly import graph_objs as go
 from stevesie.services import worker_service
 from stevesie import Worker
 
-from config import PUBLIC_MAPBOX_TOKEN, HOME_DEPOT_STORES_WORKER_ID, HOME_DEPOT_SEARCH_WORKER_ID
+from config import PUBLIC_MAPBOX_TOKEN, HOME_DEPOT_STORES_WORKER_ID, HOME_DEPOT_SEARCH_WORKER_ID, \
+    GA_TRACKING_ID, EXTERNAL_GA_SCRIPT_URL
 
 app = dash.Dash()
 
@@ -94,10 +95,24 @@ STORE_LOCATIONS = {
     }
 }
 
-app.layout = html.Div(children=[
-    html.H1(children='Home Depot Cheapo', className='text-center'),
+app.layout = html.Div([
 
-    html.P(children='Find discounted items in stock at your local store', className='text-center'),
+    html.Div([
+        html.H1('The Home Depot Cheapo', className='text-center pt-4 mb-0', style={
+            'textTransform': 'uppercase',
+            'fontWeight': 'bold',
+            'color': 'white'}),
+        html.H3('Find discounted items in stock at your local store', className='text-center mt-1 mb-2', style={
+            'color': 'white'}),
+        html.Div([
+            html.A('Source Code', href='https://github.com/stevesie88/home-depot-cheapo', target='_blank',
+                style={'color': 'white', 'textDecoration': 'underline'}),
+            html.Span(' | '),
+            html.A('Home Depot Data', href='https://stevesie.com/apps/home-depot-api', target='_blank',
+                style={'color': 'white', 'textDecoration': 'underline'})
+            ], className='text-center pb-4', style={'color': 'white', 'fontSize': '1.75rem'})
+
+    ], className='mb-3', style={'background': '#ff5600'}),
 
     html.Div([
         html.Div([
@@ -127,7 +142,7 @@ app.layout = html.Div(children=[
 
     html.Div([
         html.Div([
-            html.Button(id='button-submit', n_clicks_timestamp=0, children='Find Discounts', className='btn-block btn-success')
+            html.Button('Find Discounts', id='button-submit', n_clicks_timestamp=0, className='btn-block btn-success')
         ], className='col')
     ], className='row mt-3'),
 
@@ -140,16 +155,15 @@ app.layout = html.Div(children=[
                 html.Span(' of '),
                 html.Span('', id='state-total-pages')
             ]),
-            html.Button(id='button-back', n_clicks_timestamp=0, children='Back', className='mr-3'),
-            html.Button(id='button-next', n_clicks_timestamp=0, children='Next')
+            html.Button('Back', id='button-back', n_clicks_timestamp=0, className='mr-3'),
+            html.Button('Next', id='button-next', n_clicks_timestamp=0)
         ], className='text-center')
     ], id='container-results', className='mb-3', style={'display': 'none'}),
 
     html.Div('Please enter a keyword and/or category', id='error-no-inputs', className='alert alert-danger text-center mt-3', style={'display': 'none'}),
 
     html.Div(id='data-results', style={'display': 'none'})
-
-], className='container-fluid')
+], className='container mt-3')
 
 @app.callback(
     Output('graph-stores', 'relayoutData'),
@@ -380,8 +394,16 @@ external_css = [
     'https://stevesie-assets.nyc3.digitaloceanspaces.com/dash-styles.css'
 ]
 
+external_js = [
+    'https://www.googletagmanager.com/gtag/js?id=' + GA_TRACKING_ID,
+    EXTERNAL_GA_SCRIPT_URL
+]
+
 for css in external_css:
     app.css.append_css({'external_url': css})
+
+for js in external_js:
+    app.scripts.append_script({'external_url': js})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
