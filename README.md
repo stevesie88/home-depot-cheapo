@@ -1,5 +1,7 @@
 # Home Depot Cheapo
 
+[Live Demo](http://homedepotcheapo.com)
+
 ![Home Depot Cheapo Screenshot](home_depot_cheapo_screenshot.png)
 
 Why pay full price when you don't have to. The only search engine for finding deals at The Home Depot.
